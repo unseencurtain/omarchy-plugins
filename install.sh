@@ -25,7 +25,6 @@ Done. Place the widgets in the bar (or add them from the shell settings):
 
   omarchy bar put sine.menu
   omarchy bar put sine.indicators    --section centerBegin
-  omarchy bar put sine.elsewhen      --section centerEnd
   omarchy bar put sine.system-update --section centerEnd
 
 Then restart the shell:

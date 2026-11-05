@@ -9,7 +9,7 @@ logo, and per-widget sizes driven from a single `bar-sizes.json`.
 | Plugin | Built from | What it changes |
 | --- | --- | --- |
 | `sine.indicators` | `omarchy.indicators` | Middle status icons scaled to `0.75`. Also bridges the indicator buttons (stay-awake, do-not-disturb, night-light) to Omarchy's services through the `IpcRegistry` singleton, because a cloned widget no longer gets a first-party shell facade. |
-| `sine.elsewhen` | `omarchy.elsewhen` | World-clock globe icon scaled to `0.75`. |
+| `sine.elsewhen` | `omarchy.elsewhen` | World-clock globe icon scaled to `0.75` (installed but not placed on the bar). |
 | `sine.system-update` | `omarchy.system-update` | Update icon scaled to `0.75`. |
 | `sine.menu` | `omarchy.menu` | App-menu logo scaled to `1.25`. |
 
@@ -67,7 +67,6 @@ Then place the widgets in the bar:
 ```sh
 omarchy bar put sine.menu                          # left
 omarchy bar put sine.indicators    --section centerBegin
-omarchy bar put sine.elsewhen      --section centerEnd
 omarchy bar put sine.system-update --section centerEnd
 ```
 
