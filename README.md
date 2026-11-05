@@ -33,10 +33,6 @@ immune to Omarchy's appearance modes:
   `omarchy-theme-set-glass` only writes its own `0.65` when no
   `background-opacity` line exists, so it can never add a second layer of
   transparency.
-- **Only Ghostty is glassy.** Omarchy's glassy mode contains
-  `o.window("org\\.gnome\\.Nautilus", { opacity = "0.75 0.75" })`, so turning
-  it on fades Nautilus. The end-of-file block pins Nautilus back to
-  `1 override 1 override`, so the mode cannot fade any other app.
 - **Only Ghostty changes.** `gtk-custom-css` points at
   `~/.config/ghostty/glass.css`; Ghostty alone requests the backdrop blur, so
   Nautilus and every other GTK4 app keep their stock look. `apply.sh` also
