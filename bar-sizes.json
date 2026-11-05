@@ -1,0 +1,18 @@
+{
+  "workspaces": {
+    "numberSize": 15,
+    "glyphSize": 15
+  },
+  "indicators": {
+    "scale": 0.75
+  },
+  "menu": {
+    "scale": 1.25
+  },
+  "elsewhen": {
+    "scale": 0.75
+  },
+  "systemUpdate": {
+    "scale": 0.75
+  }
+}
