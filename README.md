@@ -16,6 +16,37 @@ logo, and per-widget sizes driven from a single `bar-sizes.json`.
 Each plugin's `manifest.json` records `omarchy.clonedFrom` so `omarchy` treats
 them as local clones rather than the stock widgets.
 
+## Terminal glass
+
+`terminal-glass/` restores the exact pre-update Ghostty glass and keeps it
+immune to Omarchy's appearance modes:
+
+- **Hyprland owns the look.** A marker-delimited block appended to the *end* of
+  `~/.config/hypr/hyprland.lua` sets `opacity = "0.75 override 0.75 override"`
+  for `com.mitchellh.ghostty` and resets every blur value Omarchy's
+  `glass.lua` can change (`brightness`, `contrast`, `noise`, `vibrancy`,
+  `xray`, `special`). Because it is last, `opaque`, `transparent`, and
+  `glassy` toggles all reload into this block.
+- **The background stays opaque.** Ghostty's `background-opacity` is pinned to
+  `1` in the user config, the current theme, every
+  `~/.config/omarchy/themes/*/ghostty.conf`, and the theme template.
+  `omarchy-theme-set-glass` only writes its own `0.65` when no
+  `background-opacity` line exists, so it can never add a second layer of
+  transparency.
+- **Blur is requested explicitly.** `gtk-custom-css` points at
+  `~/.config/ghostty/glass.css`, and `~/.config/gtk-4.0/gtk.css` gets the same
+  `backdrop-filter` request for other translucent GTK4 windows.
+- **It re-asserts itself.** Two hooks call
+  `~/.config/omarchy/terminal-glass/apply.sh`:
+
+  | Hook | When |
+  | --- | --- |
+  | `theme-set.d/60-terminal-glass.sh` | after any `omarchy theme set` |
+  | `post-update.d/60-terminal-glass.sh` | after every `omarchy update` |
+
+  `apply.sh` is idempotent and only writes a file when its content actually
+  differs, so running it by hand is always safe.
+
 ## Install
 
 ```sh
@@ -24,8 +55,12 @@ cd omarchy-plugins
 ./install.sh
 ```
 
-`install.sh` copies each plugin into `~/.config/omarchy/plugins/` and
-`bar-sizes.json` into `~/.config/omarchy/`. Then place them in the bar:
+`install.sh` copies each plugin into `~/.config/omarchy/plugins/`,
+`bar-sizes.json` into `~/.config/omarchy/`, and installs the terminal glass
+(see above) into `~/.config/omarchy/terminal-glass/` with its two hooks. On a
+brand-new Omarchy install this one command is therefore enough.
+
+Then place the widgets in the bar:
 
 ```sh
 omarchy bar put sine.menu                          # left
@@ -69,4 +104,6 @@ These two live in their own repos and are expected to be installed separately:
   those IPC targets or functions, only `sine.indicators` needs a touch-up; the
   other three are pure visual forks.
 - Everything here lives under `~/.config`, so `omarchy update` (which rewrites
-  `/usr/share`) does not remove it.
+  `/usr/share`) does not remove it. The terminal glass additionally re-applies
+  itself from `post-update.d`, so even an update that changes Omarchy's glass
+  defaults cannot stick.

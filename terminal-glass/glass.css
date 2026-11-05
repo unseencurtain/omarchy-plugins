@@ -1,0 +1,7 @@
+/* >>> terminal-glass (managed by omarchy-plugins/terminal-glass) >>> */
+/* GTK4 hands blur to the compositor only when CSS asks for a backdrop effect.
+   Ghostty loads this file through its own gtk-custom-css setting. */
+window {
+  backdrop-filter: blur(20px);
+}
+/* <<< terminal-glass (managed by omarchy-plugins/terminal-glass) <<< */

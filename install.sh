@@ -15,6 +15,10 @@ done
 cp "$DIR/bar-sizes.json" "$HOME/.config/omarchy/bar-sizes.json"
 echo "installed bar-sizes.json -> $HOME/.config/omarchy/bar-sizes.json"
 
+echo
+echo "Installing terminal glass..."
+"$DIR/terminal-glass/install.sh"
+
 cat <<'EOF'
 
 Done. Place the widgets in the bar (or add them from the shell settings):
