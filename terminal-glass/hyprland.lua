@@ -7,6 +7,12 @@ hl.window_rule({
   -- Fades the whole window, text included, exactly like before the update.
   opacity = "0.75 override 0.75 override",
 })
+-- Only the terminal is glassy. "Glassy Windows" mode fades Nautilus to 0.75;
+-- this keeps every other app solid.
+hl.window_rule({
+  match = { class = "org\\.gnome\\.Nautilus" },
+  opacity = "1 override 1 override",
+})
 hl.config({
   decoration = {
     blur = {

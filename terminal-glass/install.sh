@@ -31,7 +31,6 @@ terminal-glass installed:
   ~/.config/ghostty/glass.css                       GTK backdrop-filter request
   ~/.config/omarchy/themes/*/ghostty.conf           opaque pin in every theme
   ~/.config/omarchy/themed/ghostty.conf.tpl         opaque pin for generated themes
-  ~/.config/gtk-4.0/gtk.css                         blur for other GTK4 apps
   ~/.config/omarchy/hooks/theme-set.d/60-terminal-glass.sh
   ~/.config/omarchy/hooks/post-update.d/60-terminal-glass.sh
 EOF

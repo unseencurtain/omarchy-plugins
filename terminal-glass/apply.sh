@@ -18,7 +18,7 @@ GLASS_CSS="$CONFIG/ghostty/glass.css"
 THEME_CURRENT="$STATE/omarchy/current/theme"
 THEMES="$CONFIG/omarchy/themes"
 TEMPLATE="$CONFIG/omarchy/themed/ghostty.conf.tpl"
-GTK_CSS="$CONFIG/gtk-4.0/gtk.css"
+GTK_CSS="$CONFIG/gtk-4.0/gtk.css" # cleanup only; see below
 
 QUIET=0
 RELOAD=1
@@ -157,17 +157,29 @@ if [[ -d $THEMES ]]; then
 fi
 pin_theme "$TEMPLATE"
 
-# --- Other GTK4 apps --------------------------------------------------------
-# The backdrop-filter makes GTK ask Hyprland for blur behind translucent GTK
-# windows. Ghostty has its own copy (above); this is for Nautilus and friends.
-if [[ -d $CONFIG/gtk-4.0 || -f $GTK_CSS ]] || [[ -d $HOME/.config/gtk-4.0 ]]; then
-  mkdir -p "$(dirname "$GTK_CSS")"
-  touch "$GTK_CSS"
+# --- Keep this terminal-only ------------------------------------------------
+# An earlier version of this installer also put a backdrop-filter into
+# ~/.config/gtk-4.0/gtk.css, which made every GTK4 app (Nautilus, ...) request
+# blur. The terminal's blur belongs in Ghostty's own gtk-custom-css only, so
+# strip that block from the global stylesheet and leave other apps stock.
+if [[ -f $GTK_CSS ]] && grep -q '>>> terminal-glass' "$GTK_CSS"; then
   before=$(hash_of "$GTK_CSS")
-  apply_block "$GTK_CSS" "$SELF_DIR/gtk.css.snippet" \
-    "/* >>> terminal-glass" "/* <<< terminal-glass"
+  python3 - "$GTK_CSS" <<'PY'
+import re
+import sys
+
+path = sys.argv[1]
+with open(path, encoding="utf-8") as fh:
+    src = fh.read()
+src = re.sub(
+    r"(?ms)/\* >>> terminal-glass.*?/\* <<< terminal-glass[^\n]*\n?", "", src
+)
+src = src.rstrip("\n") + "\n"
+with open(path, "w", encoding="utf-8") as fh:
+    fh.write(src)
+PY
   [[ $(hash_of "$GTK_CSS") == "$before" ]] ||
-    say "requested backdrop blur in $GTK_CSS"
+    say "removed the global GTK blur from $GTK_CSS (terminal keeps its own)"
 fi
 
 # --- Apply live -------------------------------------------------------------
