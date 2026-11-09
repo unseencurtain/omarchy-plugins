@@ -133,7 +133,7 @@ widget's own `iconScale` setting, then to the theme default.
 
 These two live in their own repos and are expected to be installed separately:
 
-- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — per-monitor workspaces, shown with their global IDs from the workspace rules; its `workspaces` section in `bar-sizes.json` sets `numberSize` (and `glyphSize` if you opt into a focused-workspace icon).
+- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — per-monitor workspaces, shown with their global IDs from the workspace rules; its `workspaces` section in `bar-sizes.json` sets `numberSize` and `glyphSize`.
 - [`unseencurtain/unseencurtain.languages`](https://github.com/unseencurtain/unseencurtain.languages) — input-language switcher.
 
 ## Notes
