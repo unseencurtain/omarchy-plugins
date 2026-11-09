@@ -61,8 +61,7 @@ killall -SIGUSR2 ghostty   # Ghostty reloads its config live
 
 `configs/workspaces/` replaces Omarchy 4.5's fixed ten-slot workspace blocks
 with a layout you own. Hyprland workspace IDs are global, so each monitor gets a
-contiguous range; the `star.workspaces` bar widget labels each monitor's range
-`1..N`.
+contiguous range; the `star.workspaces` bar widget shows that monitor's range.
 
 | File | Where |
 | --- | --- |
@@ -78,11 +77,11 @@ local workspace_layout = {
 }
 ```
 
-That gives the laptop `1–6` and the external `7–18`; the bars label them `1–6`
-and `1–12`. Add more rows for a third or fourth monitor. The same file stops
-Omarchy's reconcile pass, so a reload no longer turns workspace `4` into `14`.
-`workspaces.lua` makes `Super+1..0` mean slots on the focused monitor rather
-than global IDs.
+That gives the laptop `1–6` and the external `7–18`; the laptop bar shows `1–6`
+and the external bar shows `7–18`. Add more rows for a third or fourth monitor.
+The same file stops Omarchy's reconcile pass, so a reload no longer turns
+workspace `4` into `14`. `workspaces.lua` keeps `Super+1..0` on the plain global
+workspace IDs.
 
 See [`configs/workspaces/README.md`](configs/workspaces/README.md) for the
 details and the bar-widget setup.
@@ -134,7 +133,7 @@ widget's own `iconScale` setting, then to the theme default.
 
 These two live in their own repos and are expected to be installed separately:
 
-- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — per-monitor workspace slots, labelled `1..N` from the workspace rules; its `workspaces` section in `bar-sizes.json` sets `numberSize` and `glyphSize`.
+- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — per-monitor workspaces, shown with their global IDs from the workspace rules; its `workspaces` section in `bar-sizes.json` sets `numberSize` and `glyphSize`.
 - [`unseencurtain/unseencurtain.languages`](https://github.com/unseencurtain/unseencurtain.languages) — input-language switcher.
 
 ## Notes
