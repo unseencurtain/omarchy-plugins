@@ -16,8 +16,11 @@ cp "$DIR/bar-sizes.json" "$HOME/.config/omarchy/bar-sizes.json"
 echo "installed bar-sizes.json -> $HOME/.config/omarchy/bar-sizes.json"
 
 echo
-echo "Installing terminal glass..."
-"$DIR/terminal-glass/install.sh"
+echo "Terminal glass is static config, not an installer step."
+echo "See configs/terminal-glass/ and copy the files by hand."
+echo
+echo "Per-monitor workspaces are static config too."
+echo "See configs/workspaces/ and merge the two Lua files by hand."
 
 cat <<'EOF'
 

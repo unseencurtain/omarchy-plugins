@@ -18,36 +18,74 @@ them as local clones rather than the stock widgets.
 
 ## Terminal glass
 
-`terminal-glass/` restores the exact pre-update Ghostty glass and keeps it
-immune to Omarchy's appearance modes:
+`configs/terminal-glass/` is plain configuration — there is no `apply.sh`, no
+hook, and nothing to re-assert. Copy the files into the configs that already
+describe the desktop:
 
-- **Hyprland owns the look.** A marker-delimited block appended to the *end* of
-  `~/.config/hypr/hyprland.lua` sets `opacity = "0.75 override 0.75 override"`
-  for `com.mitchellh.ghostty` and resets every blur value Omarchy's
-  `glass.lua` can change (`brightness`, `contrast`, `noise`, `vibrancy`,
-  `xray`, `special`). Because it is last, `opaque`, `transparent`, and
-  `glassy` toggles all reload into this block.
-- **The background stays opaque.** Ghostty's `background-opacity` is pinned to
-  `1` in the user config, the current theme, every
-  `~/.config/omarchy/themes/*/ghostty.conf`, and the theme template.
-  `omarchy-theme-set-glass` only writes its own `0.65` when no
-  `background-opacity` line exists, so it can never add a second layer of
-  transparency.
+| File | Where |
+| --- | --- |
+| `configs/terminal-glass/terminal-glass.lua` | copy to `~/.config/hypr/terminal-glass.lua` |
+| — | in `~/.config/hypr/hyprland.lua`, add `require("hypr.terminal-glass")` directly after `require("default.hypr.toggles")` |
+| `configs/terminal-glass/ghostty.conf` | add its `config-file` line after the theme's `config-file` line in `~/.config/ghostty/config` |
+| `configs/terminal-glass/glass.conf` | copy to `~/.config/ghostty/glass.conf` |
+| `configs/terminal-glass/glass.css` | copy to `~/.config/ghostty/glass.css` |
+
+`looknfeel.lua` stays untouched: it is still required with the other standard
+user modules at the top of `hyprland.lua`. Only the order-sensitive glass
+module is pulled in after the toggles.
+
+Why static config is enough:
+
+- **The glass module runs last.** `hyprland.lua` requires
+  `hypr.terminal-glass` after `require("default.hypr.toggles")`, so the 0.75
+  opacity rule and blur reset (`brightness`, `contrast`, `noise`, `vibrancy`,
+  `xray`, `special`) win over Omarchy's `opaque`, `transparent`, and `glassy`
+  toggles.
+- **Ghostty loads `glass.conf` after the theme.** Included config files take
+  effect after the file that names them, in the order listed. Naming
+  `glass.conf` after the theme include means `background-opacity = 1` beats the
+  theme's `0.65`, even after `omarchy-theme-set-glass` rewrites it. Theme files
+  and the theme template need no pinning.
 - **Only Ghostty changes.** `gtk-custom-css` points at
   `~/.config/ghostty/glass.css`; Ghostty alone requests the backdrop blur, so
-  Nautilus and every other GTK4 app keep their stock look. `apply.sh` also
-  strips the global `backdrop-filter` that an earlier version put in
-  `~/.config/gtk-4.0/gtk.css`.
-- **It re-asserts itself.** Two hooks call
-  `~/.config/omarchy/terminal-glass/apply.sh`:
+  Nautilus and other GTK4 apps keep their stock look.
 
-  | Hook | When |
-  | --- | --- |
-  | `theme-set.d/60-terminal-glass.sh` | after any `omarchy theme set` |
-  | `post-update.d/60-terminal-glass.sh` | after every `omarchy update` |
+Reload with the normal tools, not an installer:
 
-  `apply.sh` is idempotent and only writes a file when its content actually
-  differs, so running it by hand is always safe.
+```sh
+hyprctl reload
+killall -SIGUSR2 ghostty   # Ghostty reloads its config live
+```
+
+## Per-monitor workspaces
+
+`configs/workspaces/` replaces Omarchy 4.5's fixed ten-slot workspace blocks
+with a layout you own. Hyprland workspace IDs are global, so each monitor gets a
+contiguous range; the `star.workspaces` bar widget labels each monitor's range
+`1..N`.
+
+| File | Where |
+| --- | --- |
+| `configs/workspaces/monitors.lua` | merge into the sine block in `~/.config/hypr/monitors.lua` |
+| `configs/workspaces/workspaces.lua` | merge into the sine block in `~/.config/hypr/workspaces.lua` |
+
+Edit the table in `monitors.lua` to change counts:
+
+```lua
+local workspace_layout = {
+  { monitor = "eDP-1", count = 6 },
+  { monitor = "HDMI-A-1", count = 12 },
+}
+```
+
+That gives the laptop `1–6` and the external `7–18`; the bars label them `1–6`
+and `1–12`. Add more rows for a third or fourth monitor. The same file stops
+Omarchy's reconcile pass, so a reload no longer turns workspace `4` into `14`.
+`workspaces.lua` makes `Super+1..0` mean slots on the focused monitor rather
+than global IDs.
+
+See [`configs/workspaces/README.md`](configs/workspaces/README.md) for the
+details and the bar-widget setup.
 
 ## Install
 
@@ -57,10 +95,11 @@ cd omarchy-plugins
 ./install.sh
 ```
 
-`install.sh` copies each plugin into `~/.config/omarchy/plugins/`,
-`bar-sizes.json` into `~/.config/omarchy/`, and installs the terminal glass
-(see above) into `~/.config/omarchy/terminal-glass/` with its two hooks. On a
-brand-new Omarchy install this one command is therefore enough.
+`install.sh` copies each plugin into `~/.config/omarchy/plugins/` and
+`bar-sizes.json` into `~/.config/omarchy/`. It deliberately does not touch the
+terminal glass or the workspace layout: those files belong inside existing
+config blocks, so place them by hand following `configs/terminal-glass/` and
+`configs/workspaces/`.
 
 Then place the widgets in the bar:
 
@@ -95,7 +134,7 @@ widget's own `iconScale` setting, then to the theme default.
 
 These two live in their own repos and are expected to be installed separately:
 
-- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — workspace numbers/glyph; its `workspaces` section in `bar-sizes.json` sets `numberSize` and `glyphSize`.
+- [`unseencurtain/star.workspaces`](https://github.com/unseencurtain/star.workspaces) — per-monitor workspace slots, labelled `1..N` from the workspace rules; its `workspaces` section in `bar-sizes.json` sets `numberSize` and `glyphSize`.
 - [`unseencurtain/unseencurtain.languages`](https://github.com/unseencurtain/unseencurtain.languages) — input-language switcher.
 
 ## Notes
@@ -105,6 +144,5 @@ These two live in their own repos and are expected to be installed separately:
   those IPC targets or functions, only `sine.indicators` needs a touch-up; the
   other three are pure visual forks.
 - Everything here lives under `~/.config`, so `omarchy update` (which rewrites
-  `/usr/share`) does not remove it. The terminal glass additionally re-applies
-  itself from `post-update.d`, so even an update that changes Omarchy's glass
-  defaults cannot stick.
+  `/usr/share`) does not remove it. The terminal glass is ordinary config, so an
+  update cannot change it either, and there is no hook to keep in sync.

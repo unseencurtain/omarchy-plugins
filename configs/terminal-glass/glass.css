@@ -1,0 +1,6 @@
+/* Ghostty's GTK4 window asks the compositor to blur what is behind it.
+   Loaded by Ghostty's gtk-custom-css setting; the actual blur amount comes
+   from the "sine's config" block in ~/.config/hypr/hyprland.lua. */
+window {
+  backdrop-filter: blur(20px);
+}
